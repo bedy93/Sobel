@@ -8,5 +8,6 @@ file_ID = fopen ( 'kimenet.txt', 'r'); %visszaolvas
 formatspec = '%x';
 size_A= [32 32];
 M = fscanf(file_ID, formatspec,size_A);
+figure
 imshow(M/255);
 fclose(file_ID);
