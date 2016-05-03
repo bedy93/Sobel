@@ -6,7 +6,7 @@
 //
 // Create Date:   20:09:58 04/20/2016
 // Design Name:   top_level
-// Module Name:   G:/OneDrive/Dokumentumok/BME/1.Semester/Logterv/Hazi/Project/sobel/tb_top.v
+// Module Name:   
 // Project Name:  sobel
 // Target Device:  
 // Tool versions:  
@@ -74,40 +74,64 @@ module tb_top;
 
 	end
 	
-	reg [7:0] img [1023:0];
-	initial $readmemh("test.txt", img);
+	reg [7:0] img [640*480-1:0];
+	initial $readmemh("cica.txt", img);
 
+	reg [20:0] cntr = 1'b00;
+	always @ (posedge clk) begin
+		if(rst | (cntr == 640*480))
+			cntr <= 1'b0;
+		else 
+			cntr <= cntr + 1'b1;
+	end
+
+	reg hiba = 1'b0;
+	always @ (posedge clk) begin
+		//if((cntr <= 31) | (cntr%32 == 0) | ((cntr-31)%32 == 0) | (cntr > 992))begin
+		if((cntr <= 639) | (cntr%640 == 0) | ((cntr-639)%640 == 0) | (cntr > (640*480-640)))begin
+			hiba <= 1;	//"hiba":kép széle
+			p0 <= 0;
+			p1 <= 0;
+			p2 <= 0;
+			p3 <= 0;
+			p5 <= 0;
+			p6 <= 0;
+			p7 <= 0;
+			p8 <= 0;
+			end
+		else begin
+			hiba <= 0;
+			p0 <= img[cntr-640-1];
+			p1 <= img[cntr-640];
+			p2 <= img[cntr-640+1];
+			p3 <= img[cntr-1];
+			p5 <= img[cntr+1];
+			p6 <= img[cntr+640-1];
+			p7 <= img[cntr+640];
+			p8 <= img[cntr+640+1];
+			end
+	end
+	
 	integer file;
 	initial begin
-		file = $fopen("out.txt", "w");
-		while(cntr < 64) begin
-			if((cntr < 8) | (cntr%7 == 0) | (cntr%8 == 0) | (cntr > 56)) begin
-				$fwrite(file, "%x\n", 0);
+	file = $fopen("out.txt", "w");
+	end
+	
+	reg k = 1'b0;
+	reg vege = 1'b0;
+	
+	always @(posedge clk)begin
+		if((cntr <= 640*480) & (k == 0))begin
+			$fwrite(file,"%x\n",{1'b0,out_data});
+			if(cntr == 640*480)
+				k <= 1;
 			end
-			else begin
-				p0 = img[cntr-8-1];
-				p1 = img[cntr-8];
-				p2 = img[cntr-8+1];
-				p3 = img[cntr-1];
-				p5 = img[cntr+1];
-				p6 = img[cntr+8-1];
-				p7 = img[cntr+8];
-				p8 = img[cntr+8+1];
-				$fwrite(file, "%x\n", out_data);
-			end
-		end
-		$fclose(file);
+		if(cntr == 640*480)
+				vege <= 1;	
 	end
 
-	reg [9:0] cntr = 0;
-	always @ (posedge clk) begin
-		if(rst)
-			cntr <= 0;
-		else 
-			cntr <= cntr + 1;
-	end
-
-	always #5 clk <= ~clk;
+	
+	always #1 clk <= ~clk;
 
 endmodule
 

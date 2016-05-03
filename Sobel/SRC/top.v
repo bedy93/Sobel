@@ -41,24 +41,3 @@ assign sum = abs_gx + abs_gy;							// x es y irany osszeadasa
 assign out_data = (|sum[10:8]) ? 8'hff : sum[7:0];	// 255 lehet a max ertek
 
 endmodule
-
-
-
-/*reg [7:0] first_row [255:0];
-reg [7:0] cntr;
-always @ (posedge clk)
-begin
-	if(rst | cntr == 255)
-		cntr <= 0;
-	else 
-		cntr <= cntr + 1;
-end
-
-reg [7:0] konv_input [2:0][2:0];
-
-always @ (posedge clk)
-begin
-	
-		first_row[cntr] <= data_in;
-end*/
-
