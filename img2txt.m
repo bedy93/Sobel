@@ -1,13 +1,23 @@
-img = imread('Lena32_32.bmp'); 
-%gray = (rgb2gray(img));
-gray_2 = dec2hex(rgb2gray(img));
-dlmwrite('test2.txt',gray_2,'delimiter','');
-%dlmwrite('test.txt',gray,'delimiter',' '); %teszt
+clc;
+clear all;
+close all;
 
-file_ID = fopen ( 'kimenet.txt', 'r'); %visszaolvas
+% img = imread('A.jpg'); 
+% gray = (rgb2gray(img));
+% imshow(gray);
+% gray = dec2hex(gray');
+% dlmwrite('cica.txt',gray,'delimiter','');
+
+
+file_ID = fopen ( 'out.txt', 'r'); %visszaolvas
 formatspec = '%x';
-size_A= [32 32];
-M = fscanf(file_ID, formatspec,size_A);
-figure
-imshow(M/255);
+size_A= [640 480];
+M = fscanf(file_ID, formatspec,size_A).'; %kell a transzponált, különben elforog
 fclose(file_ID);
+figure();
+imshow(M/255);
+
+M = (M > 200); % ez megcsinálja az összehasonlítást :)
+
+figure();
+imshow(M)

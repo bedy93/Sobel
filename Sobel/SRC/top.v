@@ -21,23 +21,49 @@
 module top_level(
     input clk,
     input rst,
-	 input  [7:0] p0,p1,p2,p3,p5,p6,p7,p8,
 	 output [7:0] out_data
 
 );
 
-wire signed [10:0] gx, gy;    // 11 bit: gx es gy max ertekei: 255*4 + elojel
-wire signed [10:0] abs_gx, abs_gy;	// absz.ertek
-wire [10:0] sum;				  // kimenet: max 255*8 bit lehet
+img_read img_read_0 (
+		.clk(clk), 
+		.rst(rst), 
+		.p0(p0), 
+		.p1(p1), 
+		.p2(p2), 
+		.p3(p3), 
+		.p5(p5), 
+		.p6(p6), 
+		.p7(p7), 
+		.p8(p8), 
+		.vsync(vsync),
+		.hsync(hsync)
+	);
 
-assign gx =((p2-p0) + ((p5-p3)<<1) + (p8-p6));		// sobel mask for gradient in horiz. direction
-assign gy =((p0-p6) + ((p1-p7)<<1) + (p2-p8));		// sobel mask for gradient in vertical direction
+wire [7:0] p0,p1,p2,p3,p5,p6,p7,p8,out_data;
 
-assign abs_gx = (gx[10] ? ~gx+1 : gx);					// ha negativ: absz erteket veszem
-assign abs_gy = (gy[10] ? ~gy+1 : gy);	
+sobel_masking sobel_masking_0(
+	.clk(clk),
+	.rst(rst),
+	.p0(p0), 
+	.p1(p1), 
+	.p2(p2), 
+	.p3(p3), 
+	.p5(p5), 
+	.p6(p6), 
+	.p7(p7), 
+	.p8(p8),
+	.out_data(out_data)
+);
+	
+	
 
-assign sum = abs_gx + abs_gy;							// x es y irany osszeadasa
 
-assign out_data = (|sum[10:8]) ? 8'hff : sum[7:0];	// 255 lehet a max ertek
 
 endmodule
+
+
+
+	
+
+
