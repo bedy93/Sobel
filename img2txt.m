@@ -11,7 +11,7 @@ close all;
 
 file_ID = fopen ( 'out.txt', 'r'); %visszaolvas
 formatspec = '%x';
-size_A= [640 480];
+size_A= [800 521];
 M = fscanf(file_ID, formatspec,size_A).'; %kell a transzponált, különben elforog
 fclose(file_ID);
 figure();

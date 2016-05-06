@@ -1,0 +1,14 @@
+net clk loc = p55;
+net rst loc = p67 | PULLUP;
+
+net xrgb<5> loc = p137;
+net xrgb<4> loc = p138;
+net xrgb<3> loc = p139;
+net xrgb<2> loc = p140;
+net xrgb<1> loc = p141;
+net xrgb<0> loc = p142;
+net xvs 	loc = p134;
+net xhs		loc = p133;
+ 
+net "clk" TNM_NET = clk;
+TIMESPEC TS_clk = PERIOD "clk" 25 MHz HIGH 50%;
