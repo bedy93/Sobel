@@ -18,6 +18,11 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 module img_read(
 	 input clk,
     input rst,
@@ -25,15 +30,18 @@ module img_read(
 	 output vsync,
 	 output hsync
     );
-	
+	 parameter WIDTH = 120;
+	 parameter HEIGTH = 90;
+	 
+	 
 	(* ram_style = "block" *)
-	reg [7:0] img [640*480-1:0]  ;
+	reg [7:0] img [WIDTH*HEIGTH-1:0];
 
-	initial $readmemh("cica.txt", img);
+	initial $readmemh("zebra.txt", img);
 	
 	reg [20:0] cntr;
 	always @ (posedge clk) begin
-		if(rst | (cntr == 640*480))
+		if(rst | (cntr == WIDTH*HEIGTH))
 			cntr <= 1'b0;
 		else 
 			cntr <= cntr + 1'b1;
@@ -45,7 +53,7 @@ module img_read(
 	reg hiba = 1'b0;
 	always @ (posedge clk) 
 	begin
-		if((pix_cntr <= 639) | (pix_cntr%640 == 0) | ((pix_cntr-639)%640 == 0) | (pix_cntr > (640*480-640)) | ~act )// elsõ sor, elsõ oszlop, utolsó oszlop, utolsó sor kihagyása
+		if((pix_cntr <= (WIDTH-1)) | (pix_cntr%WIDTH == 0) | ((pix_cntr-(WIDTH-1))%WIDTH == 0) | (pix_cntr > (WIDTH*HEIGTH-WIDTH)) | ~act )// elsõ sor, elsõ oszlop, utolsó oszlop, utolsó sor kihagyása
 		begin
 			hiba <= 1;	//"hiba":kép széle
 			pix_0_reg <= 0;
@@ -60,14 +68,14 @@ module img_read(
 		else 
 		begin
 			hiba <= 0;
-			pix_0_reg <= img[pix_cntr-640-1];
-			pix_1_reg <= img[pix_cntr-640];
-			pix_2_reg <= img[pix_cntr-640+1];
+			pix_0_reg <= img[pix_cntr-WIDTH-1];
+			pix_1_reg <= img[pix_cntr-WIDTH];
+			pix_2_reg <= img[pix_cntr-WIDTH+1];
 			pix_3_reg <= img[pix_cntr-1];
 			pix_5_reg <= img[pix_cntr+1];
-			pix_6_reg <= img[pix_cntr+640-1];
-			pix_7_reg <= img[pix_cntr+640];
-			pix_8_reg <= img[pix_cntr+640+1];
+			pix_6_reg <= img[pix_cntr+WIDTH-1];
+			pix_7_reg <= img[pix_cntr+WIDTH];
+			pix_8_reg <= img[pix_cntr+WIDTH+1];
 		end
 	end
 	
@@ -99,7 +107,7 @@ always @(posedge clk)
 always @(posedge clk)
 	if(hcntr==655 | rst)
 		hsync1<=0;
-	else if(hcntr==752)
+	else if(hcntr==751)
 		hsync1<=1;
 
 always @(posedge clk)
@@ -126,7 +134,7 @@ always @ (posedge clk)
 	if(rst)
 		pix_cntr <= 0;
 	else
-		pix_cntr <= vcntr*640+hcntr;
+		pix_cntr <= vcntr*WIDTH+hcntr;
 	
 	
 		
@@ -161,22 +169,10 @@ reg act;
 always @(posedge clk)
 	act<=(hact1&vact1);
 
-/*wire [3:0] rd_data;		
-frame_buffer uut2(
-   .clk(clk),
-   .rst(rst),
-   .wr_en(wr_en),
-   .wr_addr(wr_addr),
-   .wr_data(wr_data),
-   .rd_addr(cim),
-   .rd_data(rd_data)
-);*/
-		
 
 assign hsync=hsync1;
 assign vsync=vsync1;		
-//assign rgb=(act)? rd_data : 4'b0000;
-assign rgb = (act)? rgb1 : 4'b0000;
+
 	
 assign	pix_0	= pix_0_reg;
 assign	pix_1	= pix_1_reg;

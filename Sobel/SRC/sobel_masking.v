@@ -37,6 +37,6 @@ assign abs_gy = (gy[10] ? ~gy+1 : gy);
 
 assign sum = abs_gx + abs_gy;							// x es y irany osszeadasa
 
-assign out_data = (|sum[10:8]) ? 8'hff : {sum[7:6],6'b0};	// 255 lehet a max ertek, 
+assign out_data = (|sum[10:8]) ? 8'hff : {sum[7:6],6'b0};	// 255 lehet a max ertek, 64 fölé a felsõ két bittel
 
 endmodule

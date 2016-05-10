@@ -74,7 +74,7 @@ module tb_top;
 	
 	always @(posedge clk)begin
 		if((cntr <= 800*521) & (k == 0))begin
-			$fwrite(file,"%x\n",{1'b0,out_data});
+			$fwrite(file,"%x\n",{2'b00,xrgb});
 			if(cntr == 800*521)
 				k <= 1;
 			end

@@ -19,9 +19,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module top_level(
-	input clk,
+	input xclk,
 	input rst,
-	output [7:0] out_data,
+	//output [7:0] out_data,
 	 
 	output [5:0] xrgb,
 	output       xhs,
@@ -29,9 +29,18 @@ module top_level(
 
 );
 
+reg clk;
+always @(posedge xclk)
+if(~rst)
+	clk <= 0;
+else
+	clk <= ~clk;
+	
+wire [7:0] pix_0, pix_1, pix_2, pix_3, pix_5, pix_6, pix_7, pix_8;
+
 img_read img_read_0 (
 		.clk(clk), 
-		.rst(rst), 
+		.rst(~rst), 
 		.pix_0(pix_0), 
 		.pix_1(pix_1), 
 		.pix_2(pix_2), 
@@ -44,15 +53,16 @@ img_read img_read_0 (
 		.hsync(xhs)
 	);
 
-wire [7:0] pix_0, pix_1, pix_2, pix_3, pix_5, pix_6, pix_7, pix_8,out_data;
-wire [5:0] xrgb;
-wire xvs,xhs;
 
-assign xrgb = { {2{|out_data[7:6]}}, {2{|out_data[7:6]}}, {2{|out_data[7:6]}} };
 
+//wire [5:0] xrgb;
+//wire xvs,xhs;
+
+
+wire [7:0] out_data;
 sobel_masking sobel_masking_0(
 	.clk(clk),
-	.rst(rst),
+	.rst(~rst),
 	.pix_0(pix_0), 
 	.pix_1(pix_1), 
 	.pix_2(pix_2), 
@@ -63,7 +73,7 @@ sobel_masking sobel_masking_0(
 	.pix_8(pix_8),
 	.out_data(out_data)
 );
-	
+	assign xrgb = { out_data[7:6], out_data[7:6], out_data[7:6]};
 	
 
 

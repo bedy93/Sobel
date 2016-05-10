@@ -1,7 +1,7 @@
 clear all;
 close all;
  
-img = imread('sample.jpg');  % Kép beolvasása
+img = imread('zebra_120_90.jpg');  % Kép beolvasása
 gray = double(rgb2gray(img)); % Átalkakítás lebegõpontos változóvá, illetve normálás 0-1re
 
 
