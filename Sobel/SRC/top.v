@@ -20,27 +20,34 @@
 //////////////////////////////////////////////////////////////////////////////////
 module top_level(
 	input xclk,
-	input rst,
-	//output [7:0] out_data,
-	 
+	input rst,	 
 	output [5:0] xrgb,
-	output       xhs,
-	output       xvs
+	output  xhs,
+	output  xvs
 
 );
-
-reg clk;
-always @(posedge xclk)
-if(~rst)
-	clk <= 0;
-else
-	clk <= ~clk;
 	
-wire [7:0] pix_0, pix_1, pix_2, pix_3, pix_5, pix_6, pix_7, pix_8;
+	wire [7:0] pix_0, pix_1, pix_2, pix_3, pix_5, pix_6, pix_7, pix_8;
+	
+	img_in img_in_0(
+			.clk(xclk), 
+			.rst(~rst), 
+			.pix_0(pix_0), 
+			.pix_1(pix_1), 
+			.pix_2(pix_2), 
+			.pix_3(pix_3), 
+			.pix_5(pix_5), 
+			.pix_6(pix_6), 
+			.pix_7(pix_7), 
+			.pix_8(pix_8)
+		);
 
-img_read img_read_0 (
-		.clk(clk), 
-		.rst(~rst), 
+
+	wire out_data;
+	
+	sobel sobel_0(
+		.clk(xclk),
+		.rst(~rst),
 		.pix_0(pix_0), 
 		.pix_1(pix_1), 
 		.pix_2(pix_2), 
@@ -48,40 +55,28 @@ img_read img_read_0 (
 		.pix_5(pix_5), 
 		.pix_6(pix_6), 
 		.pix_7(pix_7), 
-		.pix_8(pix_8), 
-		.vsync(xvs),
-		.hsync(xhs)
+		.pix_8(pix_8),
+		.out_data(out_data)
 	);
-
-
-
-//wire [5:0] xrgb;
-//wire xvs,xhs;
-
-
-wire [7:0] out_data;
-sobel_masking sobel_masking_0(
-	.clk(clk),
-	.rst(~rst),
-	.pix_0(pix_0), 
-	.pix_1(pix_1), 
-	.pix_2(pix_2), 
-	.pix_3(pix_3), 
-	.pix_5(pix_5), 
-	.pix_6(pix_6), 
-	.pix_7(pix_7), 
-	.pix_8(pix_8),
-	.out_data(out_data)
-);
-	assign xrgb = { out_data[7:6], out_data[7:6], out_data[7:6]};
 	
-
-
+	wire [5:0] xrgb1;
+	wire hsync1;
+	wire vsync1;	
+	
+	vga vga_0(
+		.clk(xclk),
+		.rst(~rst),
+		.data(out_data),
+		.rgb(xrgb1),
+		.hsync(xhs1),
+		.vsync(xvs1)	
+	);
+	
+	assign xrgb = xrgb1;
+	assign xhs = xhs1;
+	assign xvs = xvs1;	
 
 endmodule
-
-
-
 	
 
 
