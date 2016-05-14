@@ -59,23 +59,16 @@ module top_level(
 		.out_data(out_data)
 	);
 	
-	wire [5:0] xrgb1;
-	wire hsync1;
-	wire vsync1;	
-	
+
 	vga vga_0(
 		.clk(xclk),
 		.rst(~rst),
 		.data(out_data),
-		.rgb(xrgb1),
-		.hsync(xhs1),
-		.vsync(xvs1)	
+		.rgb(xrgb),				//Nem kell létrehozni az xrgb,xhs,xvs vezetékekre még egy példányt, mert a top tetején példányosítva vannak
+		.hsync(xhs),
+		.vsync(xvs)	
 	);
 	
-	assign xrgb = xrgb1;
-	assign xhs = xhs1;
-	assign xvs = xvs1;	
-
 endmodule
 	
 

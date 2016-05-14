@@ -34,18 +34,18 @@ module img_in(
 	
 //számláló a kép pixeleinek címzéséhez	
 	//25MHz: xclk/2 to VGA
-	reg clk2;				
+	reg clk_en;				
 	always @(posedge clk)
 		if(rst)
-			clk2 <= 0;
+			clk_en <= 0;
 		else
-			clk2 <= clk2 + 1;	 
+			clk_en <= ~clk_en;	 
 	 
 	//horizontális és vertikális pixel számlálók (640*480-as felbontáshoz)
 	reg [9:0] hcntr;
 	reg [9:0] vcntr;	
 	always @(posedge clk)
-		if(clk2)
+		if(clk_en)
 			if(rst)begin
 				hcntr <= 10'b0;
 				vcntr <= 10'b0;
@@ -62,19 +62,23 @@ module img_in(
 				
 	reg  [14:0] pix_cntr;
 	always @ (posedge clk)
-		if(rst)
-			pix_cntr <= 0;
-		else
-			pix_cntr <= vcntr*WIDTH + hcntr/6 + WIDTH*HEIGHT*8; //ezt a sort kellene átírni, hogy jól jelenjen meg a kép
-
+		if(clk_en)
+			if(rst)
+				pix_cntr <= 0;
+			else
+				//pix_cntr <= vcntr[9:2]*WIDTH + hcntr[9:2]; 	//ez nem tökéletes, de hardverben hatékony
+				pix_cntr <= (vcntr/5)*WIDTH + hcntr/5;			//így kéne, csak 5-tel osztani nem elegáns
+			
+			
 //3x3 blokkok a sobel algoritmus számára	
 	reg [7:0] pix_0_reg,pix_1_reg,pix_2_reg,pix_3_reg,pix_5_reg,pix_6_reg,pix_7_reg,pix_8_reg;
 	reg hiba = 1'b0;		//"hiba":kép széle
 	
-	always @ (posedge clk) 
+	always @ (posedge clk)
 	begin
+	if(clk_en)
 		if((pix_cntr <= (WIDTH-1)) | (pix_cntr%WIDTH == 0) | ((pix_cntr-(WIDTH-1))%WIDTH  ==  0) | (pix_cntr > (WIDTH*HEIGHT-WIDTH)))// elsõ sor, elsõ oszlop, utolsó oszlop, utolsó sor kihagyása
-		begin
+		begin																																								  // a kép szélének kezelése
 			hiba <= 1;			
 			pix_0_reg <= 0;
 			pix_1_reg <= 0;
@@ -98,7 +102,7 @@ module img_in(
 		end
 	end
 
-//kimenetk
+//kimenetek
 	assign	pix_0	= pix_0_reg;
 	assign	pix_1	= pix_1_reg;
 	assign	pix_2	= pix_2_reg;

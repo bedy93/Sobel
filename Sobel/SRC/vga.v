@@ -28,18 +28,18 @@ module vga(
     );
 	 
 	//25MHz: xclk/2 to VGA
-	reg clk2;				
+	reg clk_en;				
 	always @(posedge clk)
 		if(rst)
-			clk2 <= 0;
+			clk_en <= 0;
 		else
-			clk2 <= clk2 + 1;	 
+			clk_en <= ~clk_en;	 //hardverben kisebb mint a  clk_en +1;
 	 
 //horizontális és vertikális pixel számlálók
 	reg [9:0] hcntr;
 	reg [9:0] vcntr;	
 	always @(posedge clk)
-		if(clk2)
+		if(clk_en)
 			if(rst)begin
 				hcntr <= 10'b0;
 				vcntr <= 10'b0;
@@ -57,7 +57,7 @@ module vga(
 //hsync jel		
 	reg hsync1;	
 	always @(posedge clk)
-		if(clk2)
+		if(clk_en)
 			if(hcntr == 655 | rst)
 				hsync1 <= 0;
 			else if(hcntr == 751)
@@ -66,7 +66,7 @@ module vga(
 //vsync jel
 	reg vsync1;	
 	always @(posedge clk)
-		if(clk2)
+		if(clk_en)
 			if((vcntr == 489 & hcntr == 799) | rst)
 				vsync1 <= 0;
 			else if(vcntr == 491 & hcntr == 799)
@@ -75,7 +75,7 @@ module vga(
 //aktuális tartomány horizontálisan	
 	reg hact1;	
 	always @(posedge clk)
-		if(clk2)
+		if(clk_en)
 			if(hcntr == 799)
 				hact1 <= 1;
 			else if(hcntr == 639)
@@ -84,7 +84,7 @@ module vga(
 //aktuális tartomány vertikálisan	
 	reg vact1;	
 	always @(posedge clk)
-		if(clk2)	
+		if(clk_en)	
 			if(vcntr == 520 & hcntr == 799)
 				vact1 <= 1;
 			else if(vcntr == 479 & hcntr == 799)
@@ -93,7 +93,7 @@ module vga(
 //aktuális tartomány
 	reg act;
 	always @(posedge clk)
-	 if(clk2)
+	 if(clk_en)
 		if(rst)
 			act <= 0;
 		else	
@@ -102,9 +102,9 @@ module vga(
 //szín elõállítása
 	reg [5:0]rgb_reg;
 	always @(posedge clk)
-		if(clk2)
+		if(clk_en)
 			if(act)
-				rgb_reg <= {6{data}};	//data
+				rgb_reg <= {6{data}};	//data,  itt nem akarjuk kihasználni, hogy 2 biten tudunk színt ábrázolni  ?:D
 			else 
 				rgb_reg <= 6'b0;
 

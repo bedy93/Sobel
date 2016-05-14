@@ -37,13 +37,6 @@ assign abs_gy = (gy[10] ? ~gy+1 : gy);
 
 assign sum = abs_gx + abs_gy;							//x es y irany osszeadasa
 
-reg data_reg;
-always @(posedge clk)
-	if (sum > 128)	
-		data_reg <= 1'b1;
-	else								
-		data_reg <= 1'b0;
-
-assign out_data = data_reg;	//kimenet: 0, ha nem él; 1, ha él
+assign out_data = |sum[10:7];	//ha nagyobb 128-nél kimenet: 1, ha él, ha nem él: 0
 
 endmodule

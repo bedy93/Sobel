@@ -1,7 +1,7 @@
 clear all;
 close all;
  
-img = imread('zebra_120_90.jpg');  % Kép beolvasása
+img = imread('kocka_128_96.jpg');  % Kép beolvasása
 gray = double(rgb2gray(img)); % Átalkakítás lebegõpontos változóvá, illetve normálás 0-1re
 
 
@@ -25,19 +25,6 @@ out1 = abs(out1)/255;
 figure
 imshow(out1);
 
-for i=1:1:m
-    for k=1:1:n
-        if(out1(i,k)>0.5)
-            out1(i,k) = 1;
-        else
-            out1(i,k) = 0;
-        end
-    end
-end
-
-figure
-imshow(out1);
-
 for i=1:1:m-3
     for k=1:1:n-3
         temp = gray(i:i+2,k:k+2).*Kernel2;
@@ -49,21 +36,10 @@ out2 = abs(out2)/255;
 figure
 imshow(out2);
 
-for i=1:1:m
-    for k=1:1:n
-        if(out2(i,k)>0.5)
-            out2(i,k) = 1;
-        else
-            out2(i,k) = 0;
-        end
-    end
-end
+out1_kuszob = (out1 > 0.5);
+out2_kuszob = (out2 > 0.5);
 
+out_kuszob = ((out1+out2) > 0.5);
 figure
-imshow(out2);
+imshow(out_kuszob)
 
-figure
-out3= out1+out2;
-imshow(out3);
-
-        
