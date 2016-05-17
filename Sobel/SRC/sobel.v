@@ -25,7 +25,7 @@ module sobel(
 	 output out_data
     );
 	 
-wire signed [10:0] gx, gy;    		//11 bit: gx es gy max ertekei: 255*4 + elojel
+wire signed [10:0] gx, gy;    		//11 bit: gx es gy max ertekei: 255*4 + 1
 wire signed [10:0] abs_gx, abs_gy;	//absz.ertek
 wire [10:0] sum;				 			//kimenet: max 255*8 bit lehet
 
@@ -34,7 +34,7 @@ assign gy =((pix_0-pix_6) + ((pix_1-pix_7)<<1) + (pix_2-pix_8));		//sobel maszk 
 
 assign abs_gx = (gx[10] ? ~gx+1 : gx);				//ha negativ: absz erteket veszem
 assign abs_gy = (gy[10] ? ~gy+1 : gy);	
-
+ 
 assign sum = abs_gx + abs_gy;							//x es y irany osszeadasa
 
 assign out_data = |sum[10:7];	//ha nagyobb 128-nél kimenet: 1, ha él, ha nem él: 0

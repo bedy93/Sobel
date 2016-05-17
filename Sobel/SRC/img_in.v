@@ -32,20 +32,10 @@ module img_in(
 	reg [7:0] img [WIDTH*HEIGHT-1:0];
 	initial $readmemh("kocka_128_96.txt", img);
 	
-//számláló a kép pixeleinek címzéséhez	
-	//25MHz: xclk/2 to VGA
-	reg clk_en;				
-	always @(posedge clk)
-		if(rst)
-			clk_en <= 0;
-		else
-			clk_en <= ~clk_en;	 
-	 
-	//horizontális és vertikális pixel számlálók (640*480-as felbontáshoz)
+	
 	reg [9:0] hcntr;
 	reg [9:0] vcntr;	
 	always @(posedge clk)
-		if(clk_en)
 			if(rst)begin
 				hcntr <= 10'b0;
 				vcntr <= 10'b0;
@@ -58,17 +48,72 @@ module img_in(
 				hcntr <= 0;
 			end
 			else 
-				hcntr <= hcntr + 1'b1;	
+				hcntr <= hcntr + 1'b1;
+
+	 
+/*  Ez a verzió nem ment :(
+//oszlop
+	reg [2:0] oszlop;
+	wire oszlop_en;
+	
+	always @(posedge clk)
+		if(rst | (oszlop == 4))
+			oszlop <= 0;
+		else 
+			oszlop <= oszlop + 1;
 				
+	assign oszlop_en = (oszlop == 4);		
+					
+	reg [7:0] oszlop_cntr;				
+	always @(posedge clk)
+		if(rst | (oszlop_cntr == 159))
+			oszlop_cntr <= 0;
+		else if(oszlop_en)
+			oszlop_cntr <= oszlop_cntr + 1;
+				
+	//sor		
+	reg [2:0] sor;
+	reg [9:0] sor2;
+	wire sor_en;
+	
+	always @(posedge clk)
+		if(rst)begin
+			sor <= 0;
+			sor2 <= 0;
+			end
+		else if(oszlop_cntr == 159) begin
+			sor <= sor + 1;
+			sor2 <= sor2 + 1;
+		end
+		else begin
+			if(sor == 4)
+				sor <= 0;
+			if(sor2 == 520)
+				sor2 <= 0;
+		end
+			
+	assign sor_en = (sor == 4);		
+					
+	reg [6:0] sor_cntr;				
+	always @(posedge clk)
+		if(rst | (sor2 == 520))
+			sor_cntr <= 0;
+		else if(sor_en)
+			sor_cntr <= sor_cntr + 1;*/
+			
+	wire [9:0] vcntr2;
+	wire [9:0] hcntr2;	
+	assign vcntr2 = vcntr - 48;
+	assign hcntr2 = hcntr - 64;		
+	
 	reg  [14:0] pix_cntr;
 	always @ (posedge clk)
-		if(clk_en)
-			if(rst)
-				pix_cntr <= 0;
-			else
-				//pix_cntr <= vcntr[9:2]*WIDTH + hcntr[9:2]; 	//ez nem tökéletes, de hardverben hatékony
-				pix_cntr <= (vcntr/5)*WIDTH + hcntr/5;			//így kéne, csak 5-tel osztani nem elegáns
-			
+		if(rst)
+			pix_cntr <= 0;
+		else if ((vcntr > 47 & vcntr < 431 ) & (hcntr > 63 & hcntr < 575))
+			pix_cntr <= vcntr2[9:2]*WIDTH + hcntr2[9:2];
+		else 
+			pix_cntr <= 0;	
 			
 //3x3 blokkok a sobel algoritmus számára	
 	reg [7:0] pix_0_reg,pix_1_reg,pix_2_reg,pix_3_reg,pix_5_reg,pix_6_reg,pix_7_reg,pix_8_reg;
@@ -76,8 +121,7 @@ module img_in(
 	
 	always @ (posedge clk)
 	begin
-	if(clk_en)
-		if((pix_cntr <= (WIDTH-1)) | (pix_cntr%WIDTH == 0) | ((pix_cntr-(WIDTH-1))%WIDTH  ==  0) | (pix_cntr > (WIDTH*HEIGHT-WIDTH)))// elsõ sor, elsõ oszlop, utolsó oszlop, utolsó sor kihagyása
+		if((pix_cntr <= (WIDTH-1)) | (pix_cntr%WIDTH == 0) | ((pix_cntr-(WIDTH-1))%WIDTH  ==  0) | (pix_cntr > (WIDTH*HEIGHT-WIDTH)) | (vcntr < 48 | vcntr > 432 ) | (hcntr < 64 | hcntr > 576))// elsõ sor, elsõ oszlop, utolsó oszlop, utolsó sor kihagyása
 		begin																																								  // a kép szélének kezelése
 			hiba <= 1;			
 			pix_0_reg <= 0;
@@ -111,5 +155,5 @@ module img_in(
 	assign	pix_6	= pix_6_reg;
 	assign	pix_7	= pix_7_reg;
 	assign	pix_8 = pix_8_reg;
-
+ 
 endmodule
