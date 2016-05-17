@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    19:03:28 05/12/2016 
+// Create Date:    
 // Design Name: 
 // Module Name:    sobel 
 // Project Name: 
@@ -37,6 +37,6 @@ assign abs_gy = (gy[10] ? ~gy+1 : gy);
  
 assign sum = abs_gx + abs_gy;							//x es y irany osszeadasa
 
-assign out_data = |sum[10:7];	//ha nagyobb 128-nél kimenet: 1, ha él, ha nem él: 0
+assign out_data = |sum[10:7];			//ha nagyobb 128-nál a kimenet 1 (él); 0 (nem él)
 
 endmodule

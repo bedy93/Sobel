@@ -3,7 +3,7 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    09:04:26 09/23/2013 
+// Create Date:     
 // Design Name: 
 // Module Name:    top_level 
 // Project Name: 
@@ -24,15 +24,16 @@ module top_level(
 	output [5:0] xrgb,
 	output  xvs,
 	output  xhs
-	
+	);
 
-);
+//órajel felezés: 25MHz a VGA miatt
 	wire clk;
 	clk_gen clk_gen_0(
 			.clk_in(xclk),
 			.clk_out(clk) 
 		);
 	
+//kép beolvasás, a modulon belül sobel algoritmus, majd a képernyõre rajzoltatás	
 	img_vga img_vga_0(
 		.clk(clk),
 		.rst(~rst), 
