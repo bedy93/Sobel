@@ -32,24 +32,50 @@ module img_in(
 	reg [7:0] img [WIDTH*HEIGHT-1:0];
 	initial $readmemh("kocka_128_96.txt", img);
 	
-	 
+	 reg [2:0] h_precntr;
+	 always@ (posedge clk)
+	 if(rst | h_precntr == 4)
+		h_precntr <= 0;
+	 else 
+		h_precntr <= h_precntr + 1;
+		
+	 reg [12:0] v_precntr;
+	 always@ (posedge clk)
+	 if(rst | v_precntr == 4007)
+		v_precntr <= 0;
+	 else
+		v_precntr <= v_precntr + 1;
+
 	//horizontális és vertikális pixel számlálók (640*480-as felbontáshoz)
-	reg [9:0] hcntr;
-	reg [9:0] vcntr;	
+
+	reg [9:0] vcntr;
+	
 	always @(posedge clk)
-			if(rst)begin
-				hcntr <= 10'b0;
+			if(rst)
+			begin
 				vcntr <= 10'b0;
 			end
-			else if(hcntr == 799)begin
-				if(vcntr == 520)
+			else if(v_precntr == 4007)
+			begin
+				if(vcntr == 103)
 					vcntr <= 0;
 				else
 					vcntr <= vcntr + 1;
-				hcntr <= 0;
 			end
-			else 
-				hcntr <= hcntr + 1'b1;	
+			
+	reg [9:0] hcntr;		
+	always @(posedge clk)
+			if(rst)
+			begin
+				hcntr <= 10'b0;
+			end
+			else if ( h_precntr == 4)
+			begin
+				if(hcntr == 159)
+					hcntr <= 0;
+				else
+				hcntr <= hcntr + 1'b1;
+			end
 				
 	reg  [14:0] pix_cntr;
 	always @ (posedge clk)
@@ -57,8 +83,8 @@ module img_in(
 				pix_cntr <= 0;
 			else
 				//pix_cntr <= vcntr[9:2]*WIDTH + hcntr[9:2]; 	//ez nem tökéletes, de hardverben hatékony
-				pix_cntr <= (vcntr/5)*WIDTH + hcntr/5;			//így kéne, csak 5-tel osztani nem elegáns
-			
+				//pix_cntr <= (vcntr/5)*WIDTH + hcntr/5;			//így kéne, csak 5-tel osztani nem elegáns
+				pix_cntr <= vcntr*WIDTH + hcntr;
 			
 //3x3 blokkok a sobel algoritmus számára	
 	reg [7:0] pix_0_reg,pix_1_reg,pix_2_reg,pix_3_reg,pix_5_reg,pix_6_reg,pix_7_reg,pix_8_reg;
