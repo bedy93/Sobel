@@ -25,7 +25,7 @@ module sobel(
 	 output out_data
     );
 	 
-wire signed [10:0] gx, gy;    		//11 bit: gx es gy max ertekei: 255*4 + 1
+wire signed [10:0] gx, gy;    		//11 bit: gx es gy max ertekei: 255*4 + elojel
 wire signed [10:0] abs_gx, abs_gy;	//absz.ertek
 wire [10:0] sum;				 			//kimenet: max 255*8 bit lehet
 

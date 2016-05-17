@@ -30,7 +30,7 @@ module top_level(
 	clk_gen clk_gen_0(
 			.clk_in(xclk),
 			.clk_out(clk)
-		);
+			);
 	
 	wire [7:0] pix_0, pix_1, pix_2, pix_3, pix_5, pix_6, pix_7, pix_8;
 	
@@ -69,7 +69,7 @@ module top_level(
 		.clk(clk),
 		.rst(~rst),
 		.data(out_data),
-		.rgb(xrgb),				
+		.rgb(xrgb),				//Nem kell létrehozni az xrgb,xhs,xvs vezetékekre még egy példányt, mert a top tetején példányosítva vannak
 		.hsync(xhs),
 		.vsync(xvs)	
 	);
