@@ -32,20 +32,11 @@ module img_in(
 	reg [7:0] img [WIDTH*HEIGHT-1:0];
 	initial $readmemh("kocka_128_96.txt", img);
 	
-//számláló a kép pixeleinek címzéséhez	
-	//25MHz: xclk/2 to VGA
-	reg clk_en;				
-	always @(posedge clk)
-		if(rst)
-			clk_en <= 0;
-		else
-			clk_en <= ~clk_en;	 
 	 
 	//horizontális és vertikális pixel számlálók (640*480-as felbontáshoz)
 	reg [9:0] hcntr;
 	reg [9:0] vcntr;	
 	always @(posedge clk)
-		if(clk_en)
 			if(rst)begin
 				hcntr <= 10'b0;
 				vcntr <= 10'b0;
@@ -62,7 +53,6 @@ module img_in(
 				
 	reg  [14:0] pix_cntr;
 	always @ (posedge clk)
-		if(clk_en)
 			if(rst)
 				pix_cntr <= 0;
 			else
@@ -76,7 +66,6 @@ module img_in(
 	
 	always @ (posedge clk)
 	begin
-	if(clk_en)
 		if((pix_cntr <= (WIDTH-1)) | (pix_cntr%WIDTH == 0) | ((pix_cntr-(WIDTH-1))%WIDTH  ==  0) | (pix_cntr > (WIDTH*HEIGHT-WIDTH)))// elsõ sor, elsõ oszlop, utolsó oszlop, utolsó sor kihagyása
 		begin																																								  // a kép szélének kezelése
 			hiba <= 1;			
