@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module sobel(
-	 input clk, 
+	 input clk,  
     input rst,
 	 input [7:0] pix_0,pix_1,pix_2,pix_3,pix_5,pix_6,pix_7,pix_8,
 	 output out_data

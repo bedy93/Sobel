@@ -35,7 +35,6 @@ module img_vga(
 	initial $readmemh("virag_128_96.txt", img);
 	//initial $readmemh("vik_128_96.txt", img);
 	//initial $readmemh("kocka_128_96.txt", img);	
-
 	
 //horizontális és vertikális pixel számlálók
 	reg [9:0] hcntr;

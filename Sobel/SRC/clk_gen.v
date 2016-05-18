@@ -10,7 +10,7 @@ IBUFG ibufg_in (
    .O(clk_in_bufg), 
    .I(clk_in)
 );
-
+ 
 DCM_CLKGEN #(
    .CLKFXDV_DIVIDE(2),        // CLKFXDV divide value (2, 4, 8, 16, 32)
    .CLKFX_DIVIDE(64),         // Divide value - D - (1-256)

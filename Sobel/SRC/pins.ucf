@@ -11,4 +11,4 @@ NET "xvs" 	  LOC="P134" | IOSTANDARD=LVCMOS33;
 NET "xhs"	  LOC="P133" | IOSTANDARD=LVCMOS33;
  
 NET "xclk" TNM_NET = xclk;
-TIMESPEC TS_xclk = PERIOD "xclk" 50 MHz HIGH 50%;
+TIMESPEC TS_xclk = PERIOD "xclk" 50 MHz HIGH 50%; 
